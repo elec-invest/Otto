@@ -107,11 +107,11 @@
             <p class="text-xs text-slate-600 mb-4 font-medium">
                 Bienvenue sur <b class="text-slate-800">Otto Market RDC 2026</b>. La plateforme de commerce (Order Grabbing) la plus rentable.<br><br>
                 🎁 Bonus d'inscription activé.<br>
-                ⚡ Retrait rapide via Airtel & M-Pesa (USDT/USD).<br>
+                ⚡ Retrait rapide via Airtel & M-Pesa.<br>
                 Rejoignez nos groupes pour les codes bonus quotidiens !
             </p>
             
-            <a href="https://chat.whatsapp.com/JZ5PSUNMaSKGLjzcQrqHnH?mode=gi_t" target="_blank" class="btn-social btn-whatsapp">
+            <a href="https://chat.whatsapp.com/HYmaKXIEsYEJtNM2aU3x1o?mode=gi_t" target="_blank" class="btn-social btn-whatsapp">
                 <i class="fa-brands fa-whatsapp text-xl mr-2"></i> Groupe WhatsApp
             </a>
             <a href="https://t.me/+xfo96mPFop02YTg0" target="_blank" class="btn-social btn-telegram">
@@ -155,12 +155,12 @@
         <div class="balance-card card-solde">
             <i class="fa-solid fa-coins"></i>
             <p class="text-[10px] font-bold text-slate-400 uppercase">Solde actuel</p>
-            <strong id="userBalance" class="text-base font-black text-slate-800 block mt-1">0.00 $</strong>
+            <strong id="userBalance" class="text-sm font-black text-slate-800 block mt-1">0 FC</strong>
         </div>
         <div class="balance-card card-revenu">
             <i class="fa-solid fa-chart-line"></i>
             <p class="text-[10px] font-bold text-slate-400 uppercase">Gains d'équipe</p>
-            <strong id="userEarnings" class="text-base font-black text-slate-800 block mt-1">0.00 $</strong>
+            <strong id="userEarnings" class="text-sm font-black text-slate-800 block mt-1">0 FC</strong>
         </div>
     </div>
 
@@ -175,6 +175,7 @@
         const dbUrl = "https://alibaba-f22a0-default-rtdb.firebaseio.com";
         const userPhone = localStorage.getItem('userPhone');
 
+        // Sécurité de connexion
         if (!userPhone) { window.location.href = 'connexion.html'; }
 
         async function fetchUserData() {
@@ -183,19 +184,16 @@
                 const user = await response.json();
 
                 if (user) {
-                    // Affichage formaté en Dollar Américain avec deux décimales
-                    const balanceValue = parseFloat(user.balance || 0);
-                    const earningsValue = parseFloat(user.equipeGains || 0);
-                    
-                    document.getElementById('userBalance').innerText = balanceValue.toFixed(2) + " $";
-                    document.getElementById('userEarnings').innerText = earningsValue.toFixed(2) + " $";
+                    document.getElementById('userBalance').innerText = (user.balance || 0).toLocaleString() + " FC";
+                    // Simulation ou récupération des revenus d'équipe si tu as créé la variable
+                    document.getElementById('userEarnings').innerText = (user.equipeGains || 0).toLocaleString() + " FC";
                 }
             } catch (e) { console.error("Erreur de chargement des données."); }
         }
 
         function updateTicker() {
-            const networks = ["Airtel Money", "M-Pesa", "Orange Money", "Crypto Wallet"];
-            const amounts = ["10.00", "25.00", "50.00", "145.00", "300.00", "20.50"];
+            const networks = ["Airtel", "M-Pesa", "Orange"];
+            const amounts = ["4 500", "15 000", "42 000", "120 000", "350 000"];
             const phonePrefix = ["81", "82", "85", "89", "90", "97", "99"];
             
             const randPrefix = phonePrefix[Math.floor(Math.random() * phonePrefix.length)];
@@ -203,12 +201,12 @@
             const randAmt = amounts[Math.floor(Math.random() * amounts.length)];
             const randNet = networks[Math.floor(Math.random() * networks.length)];
             
-            document.getElementById('tickerText').innerText = `🔥 Succès : L'utilisateur +243${randPrefix}***${randSuffix} a retiré ${randAmt} $ via ${randNet}.`;
+            document.getElementById('tickerText').innerText = `🔥 Succès : L'utilisateur +243${randPrefix}***${randSuffix} a retiré ${randAmt} FC via ${randNet}.`;
         }
 
         fetchUserData();
         updateTicker();
-        setInterval(updateTicker, 6000);
+        setInterval(updateTicker, 6000); // Mise à jour des faux retraits toutes les 6 secondes
     </script>
 </body>
 </html>
