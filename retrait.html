@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto Market | Retrait</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 40px; }
+        .btn-rouge { background: linear-gradient(90deg, #dc3545, #bd2130); }
+        .network-box.active { border-color: #dc3545; background-color: #fef2f2; }
+    </style>
+</head>
+<body class="w-full max-w-[450px] mx-auto bg-slate-50 min-h-screen relative">
+
+    <div class="bg-white p-4 shadow-sm border-b border-slate-100 sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <a href="compte.html" class="text-slate-700 text-lg"><i class="fa-solid fa-arrow-left"></i></a>
+            <h1 class="text-base font-black text-slate-800 uppercase italic">Retirer mes gains</h1>
+        </div>
+    </div>
+
+    <div class="p-4 bg-white shadow-sm border-b border-slate-100 flex justify-between items-center">
+        <div>
+            <span class="text-slate-400 font-bold block uppercase text-[10px]">Solde disponible</span>
+            <strong id="userBalance" class="text-slate-900 font-black text-xl">0.00 $</strong>
+        </div>
+        <span class="text-[9px] bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-black uppercase"><i class="fa-solid fa-shield-halved"></i> Sécurisé</span>
+    </div>
+
+    <div class="p-4 space-y-4">
+
+        <div id="lockWarningBox" class="hidden bg-red-50 border border-red-200 rounded-2xl p-4 flex items-start space-x-3">
+            <i class="fa-solid fa-circle-xmark text-red-500 text-xl mt-0.5"></i>
+            <div>
+                <strong class="text-xs text-red-800 font-black uppercase block">Retrait Bloqué</strong>
+                <p class="text-[11px] text-red-700 mt-0.5">
+                    L'accès aux retraits est réservé uniquement aux membres ayant activé une machine de location. Vous devez d'abord louer un produit VIP pour débloquer votre compte.
+                </p>
+            </div>
+        </div>
+
+        <div class="bg-slate-900 text-white rounded-2xl p-4 space-y-2.5">
+            <span class="text-[9px] text-red-400 font-black uppercase tracking-widest block"><i class="fa-solid fa-clock"></i> Règlement du marché</span>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-white/5 p-2 rounded-xl border border-white/10">
+                    <span class="text-slate-400 text-[9px] block uppercase font-bold">Jours autorisés</span>
+                    <strong class="text-white text-[11px]">Du Lundi au Vendredi</strong>
+                </div>
+                <div class="bg-white/5 p-2 rounded-xl border border-white/10">
+                    <span class="text-slate-400 text-[9px] block uppercase font-bold">Délai de traitement</span>
+                    <strong class="text-white text-[11px]">En 1h à 24h maximum</strong>
+                </div>
+            </div>
+            <p class="text-[10px] text-slate-400 text-center italic pt-1 border-t border-white/10">
+                Note : Le montant minimum autorisé pour effectuer un retrait est fixé à <strong>3.00 $</strong>.
+            </p>
+        </div>
+
+        <div id="withdrawalForm" class="space-y-4">
+            
+            <div class="space-y-2">
+                <label class="text-xs font-black text-slate-700 uppercase tracking-wide block">1. Sélectionnez votre réseau</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="selectNetwork('Airtel Money')" id="net-airtel" class="network-box border bg-white p-2.5 rounded-2xl flex flex-col items-center justify-center">
+                        <span class="text-[10px] font-black text-red-600 uppercase">Airtel Money</span>
+                    </button>
+                    <button onclick="selectNetwork('Orange Money')" id="net-orange" class="network-box border bg-white p-2.5 rounded-2xl flex flex-col items-center justify-center">
+                        <span class="text-[10px] font-black text-orange-500 uppercase">Orange Money</span>
+                    </button>
+                    <button onclick="selectNetwork('Vodacom M-Pesa')" id="net-vodacom" class="network-box border bg-white p-2.5 rounded-2xl flex flex-col items-center justify-center">
+                        <span class="text-[10px] font-black text-blue-600 uppercase">Vodacom M-Pesa</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-xs font-black text-slate-700 uppercase tracking-wide block">2. Montant à retirer ($)</label>
+                <input type="number" id="withdrawAmount" placeholder="Minimum 3.00 $" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-3 text-sm font-black text-slate-800 outline-none focus:border-slate-400">
+            </div>
+
+            <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 space-y-3">
+                <span class="text-[10px] uppercase font-black text-slate-400 block tracking-wider border-b pb-1.5 mb-1">Informations de réception</span>
+                
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Numéro de téléphone bénéficiaire</label>
+                    <input type="number" id="receiverPhone" placeholder="Ex: 097XXXXXXXX" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 outline-none focus:border-slate-400">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Nom complet enregistré sur ce numéro</label>
+                    <input type="text" id="receiverName" placeholder="Ex: Sarah Kahindo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 outline-none focus:border-slate-400">
+                </div>
+
+                <button onclick="submitWithdrawalRequest()" class="btn-rouge w-full text-white font-black text-xs uppercase py-3 rounded-2xl shadow-md tracking-wider mt-2 transition-transform active:scale-95">
+                    Soumettre la demande de retrait
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const DB_URL = "https://alibaba-f22a0-default-rtdb.firebaseio.com";
+        const userPhone = localStorage.getItem('userPhone');
+
+        let currentBalance = 0;
+        let selectedNetwork = "";
+        let hasInvestedBefore = false; // Sécurité investisseur
+
+        if (!userPhone) { window.location.href = 'connexion.html'; }
+
+        // VÉRIFICATION EN TEMPS RÉEL DES DROITS DE L'UTILISATEUR
+        async function verifyUserStatus() {
+            try {
+                const response = await fetch(`${DB_URL}/users/${userPhone}.json`);
+                const user = await response.json();
+
+                if (!user) return;
+
+                currentBalance = parseFloat(user.balance || 0);
+                document.getElementById('userBalance').innerText = currentBalance.toFixed(2) + " $";
+
+                // RÈGLE : Vérifie s'il a un contrat en cours OU s'il a déjà investi au moins une fois
+                // Si ton Firebase ne stocke pas 'hasInvestedBefore', 'hasActiveContract' sert de sécurité immédiate
+                if (user.hasActiveContract === true || user.contractAmount > 0) {
+                    hasInvestedBefore = true;
+                }
+
+                if (!hasInvestedBefore) {
+                    // Bloquer l'affichage du formulaire et afficher l'alerte rouge
+                    document.getElementById('lockWarningBox').classList.remove('hidden');
+                    document.getElementById('withdrawalForm').classList.add('hidden');
+                } else {
+                    document.getElementById('lockWarningBox').classList.add('hidden');
+                    document.getElementById('withdrawalForm').classList.remove('hidden');
+                }
+
+            } catch (e) { console.error("Erreur d'authentification des droits.", e); }
+        }
+
+        // Sélection du réseau
+        function selectNetwork(networkName) {
+            document.querySelectorAll('.network-box').forEach(box => box.classList.remove('active'));
+            
+            if (networkName === 'Airtel Money') document.getElementById('net-airtel').classList.add('active');
+            if (networkName === 'Orange Money') document.getElementById('net-orange').classList.add('active');
+            if (networkName === 'Vodacom M-Pesa') document.getElementById('net-vodacom').classList.add('active');
+
+            selectedNetwork = networkName;
+        }
+
+        // ENVOI DE LA DEMANDE AU PANEL ADMIN + SÉCURISATION DU SOLDE
+        async function submitWithdrawalRequest() {
+            const amountInput = document.getElementById('withdrawAmount').value.trim();
+            const receiverPhone = document.getElementById('receiverPhone').value.trim();
+            const receiverName = document.getElementById('receiverName').value.trim();
+
+            if (!selectedNetwork) { return alert("Veuillez choisir un réseau Mobile Money."); }
+            if (!amountInput || !receiverPhone || !receiverName) { return alert("Veuillez remplir tous les champs."); }
+
+            const amountToWithdraw = parseFloat(amountInput);
+
+            // 1. Validation du minimum de 3$
+            if (amountToWithdraw < 3) {
+                return alert("Le montant minimum requis pour effectuer un retrait est de 3.00 $.");
+            }
+
+            // 2. Validation du solde disponible
+            if (amountToWithdraw > currentBalance) {
+                return alert(`Votre solde actuel (${currentBalance.toFixed(2)}$) est insuffisant pour retirer ${amountToWithdraw.toFixed(2)}$.`);
+            }
+
+            // Déduction immédiate du solde de l'utilisateur pour éviter les doubles retraits
+            const updatedBalance = currentBalance - amountToWithdraw;
+
+            const withdrawalPayload = {
+                userPhone: userPhone,
+                amount: amountToWithdraw,
+                network: selectedNetwork,
+                receiverPhone: receiverPhone,
+                receiverName: receiverName,
+                status: "En attente", // Ce statut sera géré par ton panneau admin (Validé / Rejeté)
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Étape A : Déduire l'argent immédiatement de son compte
+                await fetch(`${DB_URL}/users/${userPhone}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ balance: updatedBalance })
+                });
+
+                // Étape B : Envoyer la demande dans la branche globale 'withdrawals' pour l'admin
+                const response = await fetch(`${DB_URL}/withdrawals.json`, {
+                    method: 'POST',
+                    body: JSON.stringify(withdrawalPayload)
+                });
+
+                if (response.ok) {
+                    alert(`🎉 Votre demande de retrait de ${amountToWithdraw.toFixed(2)}$ a été transmise à l'administration. Elle sera traitée sous 1h à 24h.`);
+                    window.location.href = 'compte.html';
+                } else {
+                    alert("Une erreur s'est produite lors de la transmission réseau.");
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Erreur de connexion avec le serveur.");
+            }
+        }
+
+        window.onload = verifyUserStatus;
+    </script>
+</body>
+</html>
