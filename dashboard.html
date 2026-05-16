@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto Market | Accueil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 80px; }
+        
+        /* En-tête Otto Market (Rouge Dégradé) */
+        .hero-banner {
+            background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Icônes de Menu */
+        .icon-placeholder {
+            width: 50px; height: 50px;
+            background: #fff;
+            border-radius: 15px;
+            margin: 0 auto 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: #dc3545;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+        .icon-item:active .icon-placeholder { transform: scale(0.95); }
+
+        /* Notification défilante */
+        .news-ticker {
+            background: #fff;
+            padding: 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin: 15px;
+            color: #333;
+        }
+
+        /* Bannière Brossage (Tâches) */
+        .task-banner {
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'), linear-gradient(90deg, #1e293b, #0f172a);
+            color: #fff; border-radius: 20px; padding: 20px; margin: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .btn-access { background: #dc3545; color: #fff; padding: 10px 20px; border-radius: 30px; font-weight: 900; font-size: 12px; text-transform: uppercase; }
+
+        /* Cartes de Solde */
+        .balance-card {
+            background: #fff; border: 1px solid #f1f1f1;
+            border-radius: 20px; padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            text-align: center; width: 48%;
+        }
+        .balance-card i { font-size: 24px; margin-bottom: 10px; }
+        .card-solde i { color: #dc3545; }
+        .card-revenu i { color: #10b981; }
+
+        /* Barre de navigation basse */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; max-width: 450px; background: #fff;
+            display: flex; justify-content: space-around; padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px;
+            left: 50%; transform: translateX(-50%); z-index: 50;
+        }
+        .nav-item { text-align: center; font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
+        .nav-item.active { color: #dc3545; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+
+        /* Modal Annonce Centré */
+        .modal-overlay {
+            position: fixed; top:0; left:0; width: 100%; height:100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content { background: #fff; width: 85%; max-width: 340px; border-radius: 24px; padding: 25px; position: relative; text-align: center; }
+        .modal-header {
+            width: 70px; height: 70px; background: #dc3545; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: -60px auto 15px; border: 5px solid #fff; font-size: 30px; color: #fff;
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.4);
+        }
+        
+        /* Boutons Sociaux */
+        .btn-social { padding: 12px; border-radius: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; margin-top: 10px; text-transform: uppercase; font-size: 12px; color: #fff; }
+        .btn-whatsapp { background: #25D366; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+        .btn-telegram { background: #0088cc; box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3); }
+        .btn-close { background: #f1f5f9; color: #64748b; margin-top: 15px; border-radius: 12px; padding: 12px; font-weight: bold; width: 100%; }
+    </style>
+</head>
+<body class="w-full max-w-[450px] mx-auto bg-slate-50 relative min-h-screen">
+
+    <div class="modal-overlay" id="announcement">
+        <div class="modal-content">
+            <div class="modal-header"><i class="fa-solid fa-bullhorn"></i></div>
+            <h2 class="font-black text-[#dc3545] text-lg mb-2 uppercase">Avis Otto Market</h2>
+            <p class="text-xs text-slate-600 mb-4 font-medium">
+                Bienvenue sur <b class="text-slate-800">Otto Market RDC 2026</b>. La plateforme de commerce (Order Grabbing) la plus rentable.<br><br>
+                🎁 Bonus d'inscription activé.<br>
+                ⚡ Retrait rapide via Airtel & M-Pesa.<br>
+                Rejoignez nos groupes pour les codes bonus quotidiens !
+            </p>
+            
+            <a href="https://chat.whatsapp.com/JZ5PSUNMaSKGLjzcQrqHnH?mode=gi_t" target="_blank" class="btn-social btn-whatsapp">
+                <i class="fa-brands fa-whatsapp text-xl mr-2"></i> Groupe WhatsApp
+            </a>
+            <a href="https://t.me/+xfo96mPFop02YTg0" target="_blank" class="btn-social btn-telegram">
+                <i class="fa-brands fa-telegram text-xl mr-2"></i> Groupe Telegram
+            </a>
+            
+            <button class="btn-close" onclick="document.getElementById('announcement').style.display='none'">FERMER</button>
+        </div>
+    </div>
+
+    <div class="hero-banner">
+        <h1 class="font-black text-3xl italic tracking-wider">OTTO MARKET</h1>
+        <p class="text-[10px] font-bold tracking-widest uppercase mt-1 opacity-90">Plateforme de Commande - 2026</p>
+    </div>
+
+    <div class="news-ticker">
+        <i class="fa-solid fa-bell text-[#dc3545] mr-3 text-lg"></i> 
+        <marquee id="tickerText" class="text-slate-700">Chargement des retraits en direct...</marquee>
+    </div>
+
+    <div class="grid grid-cols-4 gap-4 p-4 text-center">
+        <a href="recharge.html" class="icon-item"><div class="icon-placeholder"><i class="fa-solid fa-wallet"></i></div><span class="text-[10px] font-bold text-slate-600">Recharge</span></a>
+        <a href="retrait.html" class="icon-item"><div class="icon-placeholder"><i class="fa-solid fa-money-bill-transfer"></i></div><span class="text-[10px] font-bold text-slate-600">Retrait</span></a>
+        <a href="historique.html" class="icon-item"><div class="icon-placeholder"><i class="fa-solid fa-file-invoice-dollar"></i></div><span class="text-[10px] font-bold text-slate-600">Relevé</span></a>
+        <a href="produit.html" class="icon-item"><div class="icon-placeholder"><i class="fa-solid fa-bag-shopping"></i></div><span class="text-[10px] font-bold text-slate-600">Boutique</span></a>
+        <a href="equipe.html" class="icon-item"><div class="icon-placeholder"><i class="fa-solid fa-user-group"></i></div><span class="text-[10px] font-bold text-slate-600">Inviter</span></a>
+        <a href="#" class="icon-item"><div class="icon-placeholder"><i class="fa-solid fa-shield-halved"></i></div><span class="text-[10px] font-bold text-slate-600">Règles</span></a>
+        <a href="https://t.me/+xfo96mPFop02YTg0" class="icon-item"><div class="icon-placeholder"><i class="fa-solid fa-headset"></i></div><span class="text-[10px] font-bold text-slate-600">Service</span></a>
+        <a href="a-propos.html" class="icon-item"><div class="icon-placeholder"><i class="fa-solid fa-circle-info"></i></div><span class="text-[10px] font-bold text-slate-600">À propos</span></a>
+    </div>
+
+    <a href="produit.html" class="task-banner block">
+        <div>
+            <h3 class="font-black text-lg text-white uppercase tracking-wide">Zone de Commandes</h3>
+            <p class="text-[10px] text-slate-300 font-medium mt-1">Brossez des commandes et gagnez</p>
+        </div>
+        <div class="btn-access shadow-lg shadow-red-500/50">Lancer <i class="fa-solid fa-arrow-right ml-1"></i></div>
+    </a>
+
+    <div class="flex justify-between px-4 mb-6">
+        <div class="balance-card card-solde">
+            <i class="fa-solid fa-coins"></i>
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Solde actuel</p>
+            <strong id="userBalance" class="text-sm font-black text-slate-800 block mt-1">0 FC</strong>
+        </div>
+        <div class="balance-card card-revenu">
+            <i class="fa-solid fa-chart-line"></i>
+            <p class="text-[10px] font-bold text-slate-400 uppercase">Gains d'équipe</p>
+            <strong id="userEarnings" class="text-sm font-black text-slate-800 block mt-1">0 FC</strong>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item active"><i class="fa-solid fa-house nav-icon"></i>Accueil</a>
+        <a href="produit.html" class="nav-item"><i class="fa-solid fa-hand-pointer nav-icon"></i>Brossage</a>
+        <a href="equipe.html" class="nav-item"><i class="fa-solid fa-users nav-icon"></i>Équipe</a>
+        <a href="compte.html" class="nav-item"><i class="fa-solid fa-user nav-icon"></i>Moi</a>
+    </nav>
+
+    <script>
+        const dbUrl = "https://alibaba-f22a0-default-rtdb.firebaseio.com";
+        const userPhone = localStorage.getItem('userPhone');
+
+        // Sécurité de connexion
+        if (!userPhone) { window.location.href = 'connexion.html'; }
+
+        async function fetchUserData() {
+            try {
+                const response = await fetch(`${dbUrl}/users/${userPhone}.json`);
+                const user = await response.json();
+
+                if (user) {
+                    document.getElementById('userBalance').innerText = (user.balance || 0).toLocaleString() + " FC";
+                    // Simulation ou récupération des revenus d'équipe si tu as créé la variable
+                    document.getElementById('userEarnings').innerText = (user.equipeGains || 0).toLocaleString() + " FC";
+                }
+            } catch (e) { console.error("Erreur de chargement des données."); }
+        }
+
+        function updateTicker() {
+            const networks = ["Airtel", "M-Pesa", "Orange"];
+            const amounts = ["4 500", "15 000", "42 000", "120 000", "350 000"];
+            const phonePrefix = ["81", "82", "85", "89", "90", "97", "99"];
+            
+            const randPrefix = phonePrefix[Math.floor(Math.random() * phonePrefix.length)];
+            const randSuffix = Math.floor(100 + Math.random() * 900);
+            const randAmt = amounts[Math.floor(Math.random() * amounts.length)];
+            const randNet = networks[Math.floor(Math.random() * networks.length)];
+            
+            document.getElementById('tickerText').innerText = `🔥 Succès : L'utilisateur +243${randPrefix}***${randSuffix} a retiré ${randAmt} FC via ${randNet}.`;
+        }
+
+        fetchUserData();
+        updateTicker();
+        setInterval(updateTicker, 6000); // Mise à jour des faux retraits toutes les 6 secondes
+    </script>
+</body>
+</html>
