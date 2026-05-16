@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto Market | Brossage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 90px; }
+        .btn-rouge { background: linear-gradient(90deg, #dc3545, #bd2130); }
+        
+        /* Animation du cercle de chargement lors du brossage */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            border-left-color: #dc3545;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Barre de navigation basse */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; max-width: 450px; background: #fff;
+            display: flex; justify-content: space-around; padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px;
+            left: 50%; transform: translateX(-50%); z-index: 50;
+        }
+        .nav-item { text-align: center; font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
+        .nav-item.active { color: #dc3545; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+    </style>
+</head>
+<body class="w-full max-w-[450px] mx-auto bg-slate-50 relative min-h-screen">
+
+    <div class="bg-white p-5 flex justify-between items-center shadow-sm sticky top-0 z-40">
+        <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight italic">Salles de Commande</h1>
+        <div class="bg-red-50 text-[#dc3545] font-black text-xs px-3 py-1.5 rounded-full">
+            VIP <span id="userVipBadge">1</span>
+        </div>
+    </div>
+
+    <div class="p-4">
+        <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 grid grid-cols-2 gap-4 text-center">
+            <div class="border-r border-slate-100">
+                <span class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Commandes du jour</span>
+                <strong id="clickCounter" class="text-xl font-black text-slate-800 block mt-1">0 / 30</strong>
+            </div>
+            <div>
+                <span class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Gains du jour</span>
+                <strong id="todayEarnings" class="text-xl font-black text-emerald-500 block mt-1">0 FC</strong>
+            </div>
+        </div>
+    </div>
+
+    <div id="grabbingOverlay" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-[320px] rounded-3xl p-6 text-center space-y-4 shadow-xl">
+            <div id="loaderZone" class="flex justify-center py-4">
+                <div class="spinner"></div>
+            </div>
+            <h3 id="statusText" class="font-black text-slate-800 text-sm uppercase tracking-wide">Recherche d'un marchand...</h3>
+            <p id="productDetails" class="text-xs text-slate-500 font-medium italic"></p>
+            <button id="confirmOrderBtn" class="hidden w-full btn-rouge text-white font-black uppercase text-xs py-3.5 rounded-2xl shadow-md transition-all active:scale-95">
+                Soumettre la commande
+            </button>
+        </div>
+    </div>
+
+    <div class="px-4 space-y-4" id="roomsContainer">
+        
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-[#dc3545] text-2xl">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Gisement Alpha (VIP 1)</h4>
+                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">Prix d'accès : 8 000 FC</p>
+                    <p class="text-[11px] text-emerald-500 font-black mt-1">Gain : +2 300 FC / Jour</p>
+                </div>
+            </div>
+            <button onclick="startGrabbing(1, 8000, 76.6)" class="btn-rouge text-white font-black text-[10px] uppercase tracking-wider px-4 py-3 rounded-xl shadow-sm">
+                Entrer
+            </button>
+        </div>
+
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 text-2xl">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Unité Delta (VIP 2)</h4>
+                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">Prix d'accès : 20 000 FC</p>
+                    <p class="text-[11px] text-emerald-500 font-black mt-1">Gain : +5 200 FC / Jour</p>
+                </div>
+            </div>
+            <button onclick="startGrabbing(2, 20000, 173.3)" class="btn-rouge text-white font-black text-[10px] uppercase tracking-wider px-4 py-3 rounded-xl shadow-sm">
+                Entrer
+            </button>
+        </div>
+
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 text-2xl">
+                    <i class="fa-solid fa-gas-pump"></i>
+                </div>
+                <div>
+                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Station Omega (VIP 3)</h4>
+                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">Prix d'accès : 50 000 FC</p>
+                    <p class="text-[11px] text-emerald-500 font-black mt-1">Gain : +13 500 FC / Jour</p>
+                </div>
+            </div>
+            <button onclick="startGrabbing(3, 50000, 450)" class="btn-rouge text-white font-black text-[10px] uppercase tracking-wider px-4 py-3 rounded-xl shadow-sm">
+                Entrer
+            </button>
+        </div>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house nav-icon"></i>Accueil</a>
+        <a href="produit.html" class="nav-item active"><i class="fa-solid fa-hand-pointer nav-icon"></i>Brossage</a>
+        <a href="equipe.html" class="nav-item"><i class="fa-solid fa-users nav-icon"></i>Équipe</a>
+        <a href="compte.html" class="nav-item"><i class="fa-solid fa-user nav-icon"></i>Moi</a>
+    </nav>
+
+    <script>
+        const DB_URL = "https://alibaba-f22a0-default-rtdb.firebaseio.com/users";
+        const loggedUserPhone = localStorage.getItem('userPhone');
+
+        let userBalance = 0;
+        let userVip = 1;
+        let clicksToday = 0;
+        let localTodayEarnings = 0;
+
+        // Liste de produits fictifs pour l'animation style Otto
+        const itemsList = ["Sac à main Gucci Premium", "Robe de soirée Haute Couture", "Montre Chrono Luxe", "Chaussures de Marque Italienne", "Parfum de Luxe Édition Limitée"];
+
+        async function loadUserStats() {
+            if (!loggedUserPhone) return window.location.href = "connexion.html";
+            
+            try {
+                const res = await fetch(`${DB_URL}/${loggedUserPhone}.json`);
+                const user = await res.json();
+
+                if (user) {
+                    userBalance = parseFloat(user.balance) || 0;
+                    userVip = parseInt(user.vipActive) || 1;
+                    
+                    // Réinitialisation automatique si changement de jour
+                    const todayStr = new Date().toDateString();
+                    if (user.lastClickDate !== todayStr) {
+                        clicksToday = 0;
+                        localTodayEarnings = 0;
+                        await fetch(`${DB_URL}/${loggedUserPhone}.json`, {
+                            method: 'PATCH',
+                            body: JSON.stringify({ clicksToday: 0, lastClickDate: todayStr })
+                        });
+                    } else {
+                        clicksToday = parseInt(user.clicksToday) || 0;
+                        localTodayEarnings = parseFloat(user.todayEarnings) || 0;
+                    }
+
+                    document.getElementById('userVipBadge').innerText = userVip;
+                    document.getElementById('clickCounter').innerText = `${clicksToday} / 30`;
+                    document.getElementById('todayEarnings').innerText = `${Math.floor(localTodayEarnings).toLocaleString()} FC`;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        let currentCommission = 0;
+
+        function startGrabbing(roomVip, minRequiredBalance, payoutPerClick) {
+            // 1. Protection Niveau VIP requis
+            if (userVip < roomVip) {
+                return alert(`Accès refusé. Vous devez être au minimum VIP ${roomVip} pour débloquer cette salle !`);
+            }
+
+            // 2. Protection Solde requis (Principe de blocage Otto Market)
+            if (userBalance < minRequiredBalance) {
+                return alert(`Solde insuffisant pour brosser dans cette salle. Solde requis : ${minRequiredBalance.toLocaleString()} FC.`);
+            }
+
+            // 3. Limite quotidienne de clics
+            if (clicksToday >= 30) {
+                return alert("Vous avez épuisé vos 30 commandes quotidiennes pour aujourd'hui !");
+            }
+
+            currentCommission = payoutPerClick;
+
+            // Déclenchement du panneau de scan
+            document.getElementById('grabbingOverlay').classList.remove('hidden');
+            document.getElementById('loaderZone').innerHTML = '<div class="spinner"></div>';
+            document.getElementById('statusText').innerText = "Recherche d'un marchand sur le réseau...";
+            document.getElementById('productDetails').innerText = "";
+            document.getElementById('confirmOrderBtn').classList.add('hidden');
+
+            // Simulation du système d'appariement algorithmique d'Otto Market
+            setTimeout(() => {
+                const randomItem = itemsList[Math.floor(Math.random() * itemsList.length)];
+                document.getElementById('loaderZone').innerHTML = '<i class="fa-solid fa-circle-check text-5xl text-emerald-500"></i>';
+                document.getElementById('statusText').innerText = "Commande Associée avec succès !";
+                document.getElementById('productDetails').innerText = `${randomItem} - Commission générée : +${Math.floor(currentCommission)} FC`;
+                document.getElementById('confirmOrderBtn').classList.remove('hidden');
+            }, 2500);
+        }
+
+        // Action finale : Validation et enregistrement dans Firebase
+        document.getElementById('confirmOrderBtn').onclick = async function() {
+            document.getElementById('grabbingOverlay').classList.add('hidden');
+            
+            clicksToday += 1;
+            userBalance += currentCommission;
+            localTodayEarnings += currentCommission;
+
+            document.getElementById('clickCounter').innerText = `${clicksToday} / 30`;
+            document.getElementById('todayEarnings').innerText = `${Math.floor(localTodayEarnings).toLocaleString()} FC`;
+
+            try {
+                await fetch(`${DB_URL}/${loggedUserPhone}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        balance: userBalance,
+                        clicksToday: clicksToday,
+                        todayEarnings: localTodayEarnings
+                    })
+                });
+                alert("Commission créditée sur votre compte principal !");
+            } catch (e) {
+                alert("Erreur de synchronisation réseau.");
+            }
+        };
+
+        window.onload = loadUserStats;
+    </script>
+</body>
+</html>
