@@ -155,12 +155,12 @@
         <div class="balance-card card-solde">
             <i class="fa-solid fa-coins"></i>
             <p class="text-[10px] font-bold text-slate-400 uppercase">Solde actuel</p>
-            <strong id="userBalance" class="text-sm font-black text-slate-800 block mt-1">0 FC</strong>
+            <strong id="userBalance" class="text-sm font-black text-slate-800 block mt-1">0.00 $</strong>
         </div>
         <div class="balance-card card-revenu">
             <i class="fa-solid fa-chart-line"></i>
             <p class="text-[10px] font-bold text-slate-400 uppercase">Gains d'équipe</p>
-            <strong id="userEarnings" class="text-sm font-black text-slate-800 block mt-1">0 FC</strong>
+            <strong id="userEarnings" class="text-sm font-black text-slate-800 block mt-1">0.00 $</strong>
         </div>
     </div>
 
@@ -184,16 +184,16 @@
                 const user = await response.json();
 
                 if (user) {
-                    document.getElementById('userBalance').innerText = (user.balance || 0).toLocaleString() + " FC";
-                    // Simulation ou récupération des revenus d'équipe si tu as créé la variable
-                    document.getElementById('userEarnings').innerText = (user.equipeGains || 0).toLocaleString() + " FC";
+                    // Utilisation de l'unité Dollar américain ($)
+                    document.getElementById('userBalance').innerText = (user.balance || 0).toFixed(2) + " $";
+                    document.getElementById('userEarnings').innerText = (user.equipeGains || 0).toFixed(2) + " $";
                 }
             } catch (e) { console.error("Erreur de chargement des données."); }
         }
 
         function updateTicker() {
-            const networks = ["Airtel", "M-Pesa", "Orange"];
-            const amounts = ["4 500", "15 000", "42 000", "120 000", "350 000"];
+            const networks = ["Airtel Money", "M-Pesa"];
+            const amounts = ["12.00", "36.00", "52.00", "121.00", "243.50", "366.00", "614.00"];
             const phonePrefix = ["81", "82", "85", "89", "90", "97", "99"];
             
             const randPrefix = phonePrefix[Math.floor(Math.random() * phonePrefix.length)];
@@ -201,12 +201,13 @@
             const randAmt = amounts[Math.floor(Math.random() * amounts.length)];
             const randNet = networks[Math.floor(Math.random() * networks.length)];
             
-            document.getElementById('tickerText').innerText = `🔥 Succès : L'utilisateur +243${randPrefix}***${randSuffix} a retiré ${randAmt} FC via ${randNet}.`;
+            // Faux retraits également convertis et mis à jour en dollars
+            document.getElementById('tickerText').innerText = `🔥 Succès : L'utilisateur +243${randPrefix}***${randSuffix} a retiré ${randAmt} $ via ${randNet}.`;
         }
 
         fetchUserData();
         updateTicker();
-        setInterval(updateTicker, 6000); // Mise à jour des faux retraits toutes les 6 secondes
+        setInterval(updateTicker, 6000); // Mise à jour toutes les 6 secondes
     </script>
 </body>
 </html>
