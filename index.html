@@ -98,15 +98,24 @@
                     if(existingParrain) validParrain = parrain;
                 }
 
+                // AJOUT DES VARIABLES DE CONTRAT POUR TES INVESTISSEMENTS (8%, 9%, 10%)
                 const newUser = {
                     phone: phone,
                     password: password,
-                    balance: 0,
-                    vipActive: 1, 
+                    balance: 0.00,             // Solde en USD
+                    vipActive: 1,              // VIP 1 par défaut
                     clicksToday: 0,
                     lastClickDate: new Date().toDateString(),
                     referredBy: validParrain,
-                    dateInscription: new Date().toLocaleString('fr-FR')
+                    dateInscription: new Date().toLocaleString('fr-FR'),
+                    
+                    // --- NOUVELLES VARIABLES INDISPENSABLES ---
+                    hasActiveContract: false,  // Devient true dès qu'il investit dans une liste
+                    contractType: "",          // Ex: "L3" (pour 100$) ou "N1" (pour 300$)
+                    contractAmount: 0,         // Le montant de son capital investi
+                    contractDaysLeft: 0,       // Compteur de jours restants (3 ou 2 jours)
+                    todayEarnings: 0.00,       // Intérêts accumulés aujourd'hui
+                    equipeGains: 0.00          // Commissions d'affiliation
                 };
 
                 await fetch(`${DB_URL}/${phone}.json`, {
