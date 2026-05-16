@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto Market | Équipe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 90px; }
+        .btn-rouge { background: linear-gradient(90deg, #dc3545, #bd2130); }
+        .badge-rouge { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+        
+        /* Barre de navigation basse */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; max-width: 450px; background: #fff;
+            display: flex; justify-content: space-around; padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border-top-left-radius: 20px; border-top-right-radius: 20px;
+            left: 50%; transform: translateX(-50%); z-index: 50;
+        }
+        .nav-item { text-align: center; font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
+        .nav-item.active { color: #dc3545; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+    </style>
+</head>
+<body class="w-full max-w-[450px] mx-auto bg-slate-50 relative min-h-screen">
+
+    <div class="bg-white p-5 shadow-sm sticky top-0 z-40 text-center border-b border-slate-100">
+        <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight italic">Rapport d'Équipe</h1>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Structure de commissions (USD)</p>
+    </div>
+
+    <div class="p-4">
+        <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-4">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-share-nodes text-[#dc3545] mr-1.5"></i> Votre lien d'invitation</h3>
+            
+            <div class="bg-slate-50 rounded-2xl p-4 flex justify-between items-center border border-slate-100">
+                <div>
+                    <span class="text-[10px] uppercase font-black text-slate-400 block">Mon Code de Parrainage</span>
+                    <strong id="myInviteCode" class="text-base font-black text-slate-800">0890000000</strong>
+                </div>
+                <button onclick="copyCode()" class="btn-rouge text-white text-[10px] font-black uppercase tracking-wider px-4 py-2.5 rounded-xl shadow-sm active:scale-95 transition-all">
+                    Copier
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-4">
+        <div class="bg-slate-900 text-white rounded-3xl p-5 shadow-lg space-y-4 relative overflow-hidden">
+            <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+                <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest block">Total commissions d'équipe</span>
+                <strong id="teamTotalEarnings" class="text-2xl font-black block mt-1 text-emerald-400">0.00 $</strong>
+            </div>
+            <div class="grid grid-cols-2 gap-4 border-t border-slate-800 pt-3 text-sm">
+                <div>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase block">Taille de l'équipe</span>
+                    <span id="teamSize" class="font-black text-white">0 membre(s)</span>
+                </div>
+                <div>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase block">Actifs aujourd'hui</span>
+                    <span id="activeMembers" class="font-black text-emerald-400">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-4 space-y-3">
+        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider px-1">Détail des Subordonnés</h3>
+
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
+            <div class="flex items-center space-x-3.5">
+                <div class="w-11 h-11 badge-rouge rounded-2xl flex items-center justify-center font-black text-sm">A</div>
+                <div>
+                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Membres de Niveau A</h4>
+                    <p class="text-[10px] text-slate-400 font-bold">Commission sur clics : <b class="text-[#dc3545]">16%</b></p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span id="countA" class="text-xs font-black text-slate-800 block">0 Membres</span>
+                <span id="profitA" class="text-[11px] font-bold text-emerald-500 block">+0.00 $</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
+            <div class="flex items-center space-x-3.5">
+                <div class="w-11 h-11 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-black text-sm">B</div>
+                <div>
+                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Membres de Niveau B</h4>
+                    <p class="text-[10px] text-slate-400 font-bold">Commission sur clics : <b class="text-blue-600">8%</b></p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span id="countB" class="text-xs font-black text-slate-800 block">0 Membres</span>
+                <span id="profitB" class="text-[11px] font-bold text-emerald-500 block">+0.00 $</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
+            <div class="flex items-center space-x-3.5">
+                <div class="w-11 h-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center font-black text-sm">C</div>
+                <div>
+                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Membres de Niveau C</h4>
+                    <p class="text-[10px] text-slate-400 font-bold">Commission sur clics : <b class="text-amber-600">4%</b></p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span id="countC" class="text-xs font-black text-slate-800 block">0 Membres</span>
+                <span id="profitC" class="text-[11px] font-bold text-emerald-500 block">+0.00 $</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-house nav-icon"></i>Accueil</a>
+        <a href="produit.html" class="nav-item"><i class="fa-solid fa-hand-pointer nav-icon"></i>Brossage</a>
+        <a href="equipe.html" class="nav-item active"><i class="fa-solid fa-users nav-icon"></i>Équipe</a>
+        <a href="compte.html" class="nav-item"><i class="fa-solid fa-user nav-icon"></i>Moi</a>
+    </nav>
+
+    <script>
+        const DB_URL = "https://alibaba-f22a0-default-rtdb.firebaseio.com/users";
+        const userPhone = localStorage.getItem('userPhone');
+
+        if (!userPhone) { window.location.href = 'connexion.html'; }
+
+        document.getElementById('myInviteCode').innerText = userPhone;
+
+        function copyCode() {
+            const codeText = document.getElementById('myInviteCode').innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                alert("Code d'invitation copié !");
+            }).catch(() => {
+                alert("Échec de la copie.");
+            });
+        }
+
+        async function fetchTeamStructure() {
+            try {
+                const response = await fetch(`${DB_URL}.json`);
+                const allUsers = await response.json();
+
+                if (!allUsers) return;
+
+                let levelAMembers = [];
+                let levelBMembers = [];
+                let levelCMembers = [];
+                let teamGainsTotal = 0;
+
+                // 1. Niveau A (Invitations directes) -> 16%
+                for (let key in allUsers) {
+                    if (allUsers[key].referredBy === userPhone) {
+                        levelAMembers.push(allUsers[key]);
+                        teamGainsTotal += (parseFloat(allUsers[key].todayEarnings) || 0) * 0.16;
+                    }
+                }
+
+                // 2. Niveau B (Invitations de A) -> 8%
+                levelAMembers.forEach(memberA => {
+                    for (let key in allUsers) {
+                        if (allUsers[key].referredBy === memberA.phone) {
+                            levelBMembers.push(allUsers[key]);
+                            teamGainsTotal += (parseFloat(allUsers[key].todayEarnings) || 0) * 0.08;
+                        }
+                    }
+                });
+
+                // 3. Niveau C (Invitations de B) -> 4%
+                levelBMembers.forEach(memberB => {
+                    for (let key in allUsers) {
+                        if (allUsers[key].referredBy === memberB.phone) {
+                            levelCMembers.push(allUsers[key]);
+                            teamGainsTotal += (parseFloat(allUsers[key].todayEarnings) || 0) * 0.04;
+                        }
+                    }
+                });
+
+                // Rendu global des totaux au format dollar
+                const totalSize = levelAMembers.length + levelBMembers.length + levelCMembers.length;
+                document.getElementById('teamSize').innerText = `${totalSize} membre(s)`;
+                document.getElementById('teamTotalEarnings').innerText = teamGainsTotal.toFixed(2) + " $";
+
+                document.getElementById('countA').innerText = `${levelAMembers.length} Membres`;
+                document.getElementById('countB').innerText = `${levelBMembers.length} Membres`;
+                document.getElementById('countC').innerText = `${levelCMembers.length} Membres`;
+
+                // Sommes cumulées par paliers de gains en USD
+                let sumA = levelAMembers.reduce((acc, m) => acc + ((parseFloat(m.todayEarnings) || 0) * 0.16), 0);
+                let sumB = levelBMembers.reduce((acc, m) => acc + ((parseFloat(m.todayEarnings) || 0) * 0.08), 0);
+                let sumC = levelCMembers.reduce((acc, m) => acc + ((parseFloat(m.todayEarnings) || 0) * 0.04), 0);
+
+                document.getElementById('profitA').innerText = `+${sumA.toFixed(2)} $`;
+                document.getElementById('profitB').innerText = `+${sumB.toFixed(2)} $`;
+                document.getElementById('profitC').innerText = `+${sumC.toFixed(2)} $`;
+
+                // Comptabilisation des sous-membres actifs du jour
+                let activeCount = [...levelAMembers, ...levelBMembers, ...levelCMembers].filter(m => (parseInt(m.clicksToday) || 0) > 0).length;
+                document.getElementById('activeMembers').innerText = activeCount;
+
+                // Mise à jour de Firebase
+                await fetch(`${DB_URL}/${userPhone}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ equipeGains: teamGainsTotal })
+                });
+
+            } catch (error) {
+                console.error("Erreur lors du chargement de l'arbre d'équipe :", error);
+            }
+        }
+
+        window.onload = fetchTeamStructure;
+    </script>
+</body>
+</html>
