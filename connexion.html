@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto Market | Connexion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            font-family: 'Segoe UI', sans-serif; 
+        }
+        .input-container {
+            border: 1.5px solid #e2e8f0;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .input-container:focus-within {
+            border-color: #dc3545;
+            box-shadow: 0 0 12px rgba(220, 53, 69, 0.15);
+        }
+        .btn-rouge {
+            background: linear-gradient(90deg, #dc3545, #bd2130);
+        }
+    </style>
+</head>
+<body class="w-full min-h-screen flex flex-col justify-center items-center px-4 py-8">
+
+    <div class="w-full max-w-[360px] mx-auto space-y-6">
+        
+        <div class="text-center space-y-2">
+            <h1 class="text-4xl font-black tracking-wider text-[#dc3545] italic uppercase block">OTTO MARKET</h1>
+            <p class="text-[11px] text-slate-400 font-bold uppercase tracking-widest block">Plateforme de Commande RDC — Version 2026</p>
+        </div>
+
+        <form id="loginForm" class="w-full bg-white p-6 rounded-3xl shadow-xl border border-slate-100 space-y-5">
+            
+            <div class="w-full">
+                <label class="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-1.5 ml-1">Numéro de téléphone</label>
+                <div class="flex items-center rounded-2xl input-container px-4 py-3.5 w-full">
+                    <i class="fa-solid fa-phone text-slate-400 mr-3 text-sm"></i>
+                    <input type="tel" id="phone" placeholder="Entrez votre numéro" required
+                           class="w-full bg-transparent text-sm font-bold outline-none text-slate-800">
+                </div>
+            </div>
+
+            <div class="w-full">
+                <label class="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-1.5 ml-1">Mot de passe</label>
+                <div class="flex items-center rounded-2xl input-container px-4 py-3.5 w-full">
+                    <i class="fa-solid fa-lock text-slate-400 mr-3 text-sm"></i>
+                    <input type="password" id="password" placeholder="Entrez votre mot de passe" required
+                           class="w-full bg-transparent text-sm font-bold outline-none text-slate-800">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full btn-rouge py-4 rounded-2xl text-xs font-black uppercase tracking-widest text-white shadow-md transition-all active:scale-95 block text-center mt-2">
+                Se connecter
+            </button>
+        </form>
+
+        <div class="text-center w-full">
+            <p class="text-xs text-slate-500 font-semibold">
+                Nouveau sur la plateforme ? <a href="inscription.html" class="text-[#dc3545] font-black underline underline-offset-2 ml-1">Créer un compte</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const DB_URL = "https://alibaba-f22a0-default-rtdb.firebaseio.com/users";
+
+        document.getElementById('loginForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch(`${DB_URL}/${phone}.json`);
+                const user = await res.json();
+
+                if (!user) return alert("Numéro introuvable.");
+                if (user.password !== password) return alert("Mot de passe incorrect.");
+
+                localStorage.setItem('userPhone', user.phone);
+                alert("Bienvenue sur Otto Market 2026 !");
+                window.location.href = "dashboard.html";
+
+            } catch (e) { alert("Erreur serveur."); }
+        };
+    </script>
+</body>
+</html>
