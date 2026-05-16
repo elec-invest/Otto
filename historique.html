@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto Market | Historique</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 40px; }
+        .tab-btn.active { border-color: #dc3545; color: #dc3545; font-weight: 900; }
+    </style>
+</head>
+<body class="w-full max-w-[450px] mx-auto bg-slate-50 min-h-screen relative">
+
+    <div class="bg-white p-4 shadow-sm border-b border-slate-100 sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <a href="compte.html" class="text-slate-700 text-lg"><i class="fa-solid fa-arrow-left"></i></a>
+            <h1 class="text-base font-black text-slate-800 uppercase italic">Relevé de compte</h1>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-sm border-b border-slate-200 grid grid-cols-2 sticky top-[53px] z-40">
+        <button onclick="switchTab('deposits')" id="tab-deposits" class="tab-btn active py-3 text-xs font-bold text-slate-500 border-b-2 border-transparent uppercase tracking-wide transition-all">
+            <i class="fa-solid fa-wallet mr-1"></i> Mes Recharges
+        </button>
+        <button onclick="switchTab('withdrawals')" id="tab-withdrawals" class="tab-btn py-3 text-xs font-bold text-slate-500 border-b-2 border-transparent uppercase tracking-wide transition-all">
+            <i class="fa-solid fa-money-bill-transfer mr-1"></i> Mes Retraits
+        </button>
+    </div>
+
+    <div class="p-4">
+        <div id="history-container" class="space-y-3">
+            <p class="text-xs text-slate-500 italic text-center py-8">Chargement de votre historique...</p>
+        </div>
+    </div>
+
+    <script>
+        const DB_URL = "https://alibaba-f22a0-default-rtdb.firebaseio.com";
+        const userPhone = localStorage.getItem('userPhone');
+        
+        let currentTab = 'deposits'; // 'deposits' ou 'withdrawals'
+        let cachedData = { deposits: {}, withdrawals: {} };
+
+        if (!userPhone) { window.location.href = 'connexion.html'; }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            currentTab = tabName;
+            renderHistory();
+        }
+
+        // Récupérer l'ensemble des données
+        async function fetchUserHistory() {
+            try {
+                const [depResp, withResp] = await Promise.all([
+                    fetch(`${DB_URL}/deposits.json`),
+                    fetch(`${DB_URL}/withdrawals.json`)
+                ]);
+
+                cachedData.deposits = await depResp.json() || {};
+                cachedData.withdrawals = await withResp.json() || {};
+
+                renderHistory();
+            } catch (e) {
+                document.getElementById('history-container').innerHTML = `<p class="text-xs text-red-500 text-center font-bold">Erreur de chargement des données.</p>`;
+            }
+        }
+
+        // Filtrer et afficher uniquement les transactions de cet utilisateur
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            container.innerHTML = "";
+            
+            const targetData = cachedData[currentTab];
+            let hasItems = false;
+
+            // Trier par date décroissante (les plus récentes en premier)
+            const sortedKeys = Object.keys(targetData).reverse();
+
+            for (let key of sortedKeys) {
+                const tx = targetData[key];
+                if (tx.userPhone !== userPhone) continue; // Sécurité filtre client
+                hasItems = true;
+
+                // Gestion des couleurs selon le statut
+                let statusBadge = '';
+                if (tx.status === "Validé") statusBadge = '<span class="text-[9px] font-black uppercase px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600">Validé</span>';
+                else if (tx.status === "Rejeté") statusBadge = '<span class="text-[9px] font-black uppercase px-2.5 py-1 rounded-full bg-red-50 text-red-600">Rejeté</span>';
+                else statusBadge = '<span class="text-[9px] font-black uppercase px-2.5 py-1 rounded-full bg-amber-50 text-amber-600 animate-pulse">En attente</span>';
+
+                let iconHtml = currentTab === 'deposits' 
+                    ? '<i class="fa-solid fa-arrow-down-long text-emerald-500 bg-emerald-50 p-3 rounded-xl"></i>' 
+                    : '<i class="fa-solid fa-arrow-up-long text-red-500 bg-red-50 p-3 rounded-xl"></i>';
+
+                let typeLabel = currentTab === 'deposits' ? 'Recharge de compte' : 'Demande de retrait';
+                let sign = currentTab === 'deposits' ? '+' : '-';
+                let amountColor = currentTab === 'deposits' ? 'text-emerald-600' : 'text-slate-900';
+
+                container.innerHTML += `
+                    <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            ${iconHtml}
+                            <div>
+                                <strong class="text-xs font-black text-slate-800 block">${typeLabel}</strong>
+                                <span class="text-[10px] font-bold text-slate-400 block mt-0.5">${new Date(tx.timestamp).toLocaleString()}</span>
+                                <span class="text-[9px] text-slate-400 font-medium block">Via ${tx.network}</span>
+                            </div>
+                        </div>
+                        <div class="text-right space-y-1.5">
+                            <strong class="text-sm font-black ${amountColor} block">${sign} ${parseFloat(tx.amount).toFixed(2)} $</strong>
+                            ${statusBadge}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (!hasItems) {
+                container.innerHTML = `
+                    <div class="text-center py-12 space-y-2">
+                        <i class="fa-solid fa-receipt text-slate-300 text-3xl block"></i>
+                        <p class="text-xs text-slate-400 font-medium">Aucune transaction trouvée dans cette catégorie.</p>
+                    </div>
+                `;
+            }
+        }
+
+        window.onload = fetchUserHistory;
+    </script>
+</body>
+</html>
