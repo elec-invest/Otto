@@ -3,24 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Otto Market | Brossage</title>
+    <title>Otto Market | Location de Produits</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 90px; }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 100px; }
         .btn-rouge { background: linear-gradient(90deg, #dc3545, #bd2130); }
-        
-        /* Animation du cercle de chargement lors du brossage */
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 50px; height: 50px;
-            border-radius: 50%;
-            border-left-color: #dc3545;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Barre de navigation basse */
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%; max-width: 450px; background: #fff;
             display: flex; justify-content: space-around; padding: 12px 0;
@@ -30,91 +18,207 @@
         .nav-item { text-align: center; font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase; }
         .nav-item.active { color: #dc3545; }
         .nav-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+        .tab-btn.active { border-bottom: 3px solid #dc3545; color: #dc3545; font-weight: 900; }
     </style>
 </head>
 <body class="w-full max-w-[450px] mx-auto bg-slate-50 relative min-h-screen">
 
-    <div class="bg-white p-5 flex justify-between items-center shadow-sm sticky top-0 z-40">
-        <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight italic">Salles de Commande</h1>
-        <div class="bg-red-50 text-[#dc3545] font-black text-xs px-3 py-1.5 rounded-full">
-            VIP <span id="userVipBadge">1</span>
+    <div class="bg-white p-4 shadow-sm sticky top-0 z-40 border-b border-slate-100">
+        <div class="flex justify-between items-center mb-2">
+            <h1 class="text-base font-black text-slate-800 uppercase italic">Marché de Location</h1>
+            <span class="text-[10px] bg-red-50 text-[#dc3545] px-3 py-1 rounded-full font-black uppercase">Statut : En Ligne</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs bg-slate-900 text-white p-3 rounded-2xl">
+            <div>
+                <span class="text-slate-400 font-bold block uppercase text-[9px]">Mon Solde Total</span>
+                <strong id="userBalance" class="text-emerald-400 font-black text-base">0.00 $</strong>
+            </div>
+            <div class="text-right">
+                <span class="text-slate-400 font-bold block uppercase text-[9px]">Gains du Jour</span>
+                <strong id="userTodayEarnings" class="text-white font-black text-base">0.00 $</strong>
+            </div>
         </div>
     </div>
 
     <div class="p-4">
-        <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 grid grid-cols-2 gap-4 text-center">
-            <div class="border-r border-slate-100">
-                <span class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Commandes du jour</span>
-                <strong id="clickCounter" class="text-xl font-black text-slate-800 block mt-1">0 / 30</strong>
+        <div id="noContractBox" class="bg-white border-2 border-dashed border-slate-200 rounded-3xl p-5 text-center">
+            <i class="fa-solid fa-store-slash text-slate-300 text-3xl mb-2"></i>
+            <p class="text-xs font-bold text-slate-400 uppercase">Aucun produit loué actuellement</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Choisissez un produit ci-dessous pour lancer vos revenus.</p>
+        </div>
+
+        <div id="activeContractBox" class="hidden bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-3xl p-5 shadow-md space-y-3 relative overflow-hidden">
+            <div class="absolute -right-4 -bottom-4 opacity-10 text-7xl"><i class="fa-solid fa-retweet"></i></div>
+            <div class="flex justify-between items-start">
+                <div>
+                    <span class="text-[9px] uppercase font-black tracking-widest text-orange-100 block">Location Active</span>
+                    <h2 id="activeContractName" class="text-base font-black uppercase mt-0.5">PRODUIT L1</h2>
+                </div>
+                <span id="activeContractTimer" class="bg-white/20 text-[10px] px-2.5 py-1 rounded-full font-black uppercase">3 Jours restants</span>
             </div>
-            <div>
-                <span class="text-[10px] uppercase font-black text-slate-400 tracking-wider">Gains du jour</span>
-                <strong id="todayEarnings" class="text-xl font-black text-emerald-500 block mt-1">0 FC</strong>
+            <div class="grid grid-cols-2 gap-2 border-t border-white/20 pt-2.5 text-xs">
+                <div>
+                    <span class="text-[9px] opacity-75 block">Capital Bloqué</span>
+                    <strong id="activeContractCapital" class="font-black">0.00 $</strong>
+                </div>
+                <div class="text-right">
+                    <span class="text-[9px] opacity-75 block">Rendement Journalier</span>
+                    <strong id="activeContractPayout" class="font-black text-yellow-200">+0.00 $</strong>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="grabbingOverlay" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-[320px] rounded-3xl p-6 text-center space-y-4 shadow-xl">
-            <div id="loaderZone" class="flex justify-center py-4">
-                <div class="spinner"></div>
-            </div>
-            <h3 id="statusText" class="font-black text-slate-800 text-sm uppercase tracking-wide">Recherche d'un marchand...</h3>
-            <p id="productDetails" class="text-xs text-slate-500 font-medium italic"></p>
-            <button id="confirmOrderBtn" class="hidden w-full btn-rouge text-white font-black uppercase text-xs py-3.5 rounded-2xl shadow-md transition-all active:scale-95">
-                Soumettre la commande
-            </button>
-        </div>
+    <div class="flex bg-white shadow-sm text-center font-bold text-xs uppercase tracking-wider text-slate-400 sticky top-[95px] z-30 border-b border-slate-100">
+        <button onclick="switchVip('vip1')" id="tab-vip1" class="tab-btn active w-1/3 py-3.5">VIP 1 (8%)</button>
+        <button onclick="switchVip('vip2')" id="tab-vip2" class="tab-btn w-1/3 py-3.5">VIP 2 (9%)</button>
+        <button onclick="switchVip('vip3')" id="tab-vip3" class="tab-btn w-1/3 py-3.5">VIP 3 (10%)</button>
     </div>
 
-    <div class="px-4 space-y-4" id="roomsContainer">
-        
-        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center text-[#dc3545] text-2xl">
-                    <i class="fa-solid fa-basket-shopping"></i>
+    <div class="p-4 space-y-4">
+
+        <div id="container-vip1" class="vip-container space-y-3">
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_3931.jpeg" alt="L1" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Pack Numérique L1</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">12.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +0.96 $ / jour</span>
                 </div>
-                <div>
-                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Gisement Alpha (VIP 1)</h4>
-                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">Prix d'accès : 8 000 FC</p>
-                    <p class="text-[11px] text-emerald-500 font-black mt-1">Gain : +2 300 FC / Jour</p>
-                </div>
+                <button onclick="processRent('L1', 12, 0.08, 3)" class="btn-rouge text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
             </div>
-            <button onclick="startGrabbing(1, 8000, 76.6)" class="btn-rouge text-white font-black text-[10px] uppercase tracking-wider px-4 py-3 rounded-xl shadow-sm">
-                Entrer
-            </button>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5441.jpeg" alt="L2" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Pack Logistique L2</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">52.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +4.16 $ / jour</span>
+                </div>
+                <button onclick="processRent('L2', 52, 0.08, 3)" class="btn-rouge text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5443.jpeg" alt="L3" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Fret Premium L3</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">100.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +8.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('L3', 100, 0.08, 3)" class="btn-rouge text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5444.jpeg" alt="L4" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Transit Majeur L4</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">162.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +12.96 $ / jour</span>
+                </div>
+                <button onclick="processRent('L4', 162, 0.08, 3)" class="btn-rouge text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5445.jpeg" alt="L5" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Entrepôt National L5</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">200.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +16.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('L5', 200, 0.08, 3)" class="btn-rouge text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
         </div>
 
-        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 text-2xl">
-                    <i class="fa-solid fa-gem"></i>
+        <div id="container-vip2" class="vip-container hidden space-y-3">
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5447.jpeg" alt="N1" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Cargo Express N1</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">300.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +27.00 $ / jour</span>
                 </div>
-                <div>
-                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Unité Delta (VIP 2)</h4>
-                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">Prix d'accès : 20 000 FC</p>
-                    <p class="text-[11px] text-emerald-500 font-black mt-1">Gain : +5 200 FC / Jour</p>
-                </div>
+                <button onclick="processRent('N1', 300, 0.09, 3)" class="bg-[#dc3545] text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
             </div>
-            <button onclick="startGrabbing(2, 20000, 173.3)" class="btn-rouge text-white font-black text-[10px] uppercase tracking-wider px-4 py-3 rounded-xl shadow-sm">
-                Entrer
-            </button>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5448.jpeg" alt="N2" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Fret Maritime N2</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">400.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +36.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('N2', 400, 0.09, 3)" class="bg-[#dc3545] text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5449.jpeg" alt="N3" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Hub International N3</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">500.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +45.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('N3', 500, 0.09, 3)" class="bg-[#dc3545] text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5451.jpeg" alt="N4" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Transit Continental N4</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">600.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +54.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('N4', 600, 0.09, 3)" class="bg-[#dc3545] text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5452.jpeg" alt="N5" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Méga Marché N5</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">800.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +72.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('N5', 800, 0.09, 3)" class="bg-[#dc3545] text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
         </div>
 
-        <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-                <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 text-2xl">
-                    <i class="fa-solid fa-gas-pump"></i>
+        <div id="container-vip3" class="vip-container hidden space-y-3">
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5454.jpeg" alt="V1" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Alliance Dorée V1</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">1 000.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +100.00 $ / jour</span>
                 </div>
-                <div>
-                    <h4 class="font-black text-sm text-slate-800 uppercase tracking-tight">Station Omega (VIP 3)</h4>
-                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">Prix d'accès : 50 000 FC</p>
-                    <p class="text-[11px] text-emerald-500 font-black mt-1">Gain : +13 500 FC / Jour</p>
-                </div>
+                <button onclick="processRent('V1', 1000, 0.10, 2)" class="bg-amber-500 text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
             </div>
-            <button onclick="startGrabbing(3, 50000, 450)" class="btn-rouge text-white font-black text-[10px] uppercase tracking-wider px-4 py-3 rounded-xl shadow-sm">
-                Entrer
-            </button>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5455.jpeg" alt="V2" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Prestige Global V2</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">2 000.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +200.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('V2', 2000, 0.10, 2)" class="bg-amber-500 text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5457.jpeg" alt="V3" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Aéro-Spatiale V3</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">3 000.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +300.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('V3', 3000, 0.10, 2)" class="bg-amber-500 text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5458.jpeg" alt="V4" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Monopole Élite V4</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">4 000.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +400.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('V4', 4000, 0.10, 2)" class="bg-amber-500 text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
+            <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-100 flex items-center space-x-3.5">
+                <img src="IMG_5459.jpeg" alt="V5" class="w-16 h-16 object-cover rounded-2xl bg-slate-50 border border-slate-100">
+                <div class="flex-1">
+                    <h3 class="font-black text-xs text-slate-800 uppercase">Suprême Souverain V5</h3>
+                    <p class="text-[10px] text-slate-400 font-bold">Investissement : <span class="text-slate-700">5 000.00 $</span></p>
+                    <span class="text-[10px] text-emerald-500 font-black block mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> +500.00 $ / jour</span>
+                </div>
+                <button onclick="processRent('V5', 5000, 0.10, 2)" class="bg-amber-500 text-white text-[10px] font-black uppercase px-3 py-2 rounded-xl shadow-sm">Louer</button>
+            </div>
         </div>
 
     </div>
@@ -128,112 +232,142 @@
 
     <script>
         const DB_URL = "https://alibaba-f22a0-default-rtdb.firebaseio.com/users";
-        const loggedUserPhone = localStorage.getItem('userPhone');
+        const userPhone = localStorage.getItem('userPhone');
 
-        let userBalance = 0;
-        let userVip = 1;
-        let clicksToday = 0;
-        let localTodayEarnings = 0;
+        let currentBalance = 0;
+        let currentParrain = "";
 
-        // Liste de produits fictifs pour l'animation style Otto
-        const itemsList = ["Sac à main Gucci Premium", "Robe de soirée Haute Couture", "Montre Chrono Luxe", "Chaussures de Marque Italienne", "Parfum de Luxe Édition Limitée"];
+        if (!userPhone) { window.location.href = 'connexion.html'; }
 
-        async function loadUserStats() {
-            if (!loggedUserPhone) return window.location.href = "connexion.html";
+        // NAVIGATION ENTRE LES ONGLETS VIP SEPARÉS
+        function switchVip(vipKey) {
+            document.querySelectorAll('.vip-container').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             
-            try {
-                const res = await fetch(`${DB_URL}/${loggedUserPhone}.json`);
-                const user = await res.json();
+            document.getElementById(`container-${vipKey}`).classList.remove('hidden');
+            document.getElementById(`tab-${vipKey}`).classList.add('active');
+        }
 
-                if (user) {
-                    userBalance = parseFloat(user.balance) || 0;
-                    userVip = parseInt(user.vipActive) || 1;
-                    
-                    // Réinitialisation automatique si changement de jour
-                    const todayStr = new Date().toDateString();
-                    if (user.lastClickDate !== todayStr) {
-                        clicksToday = 0;
-                        localTodayEarnings = 0;
-                        await fetch(`${DB_URL}/${loggedUserPhone}.json`, {
+        // CHARGEMENT ET SYSTÈME DE VÉRIFICATION DE L'EXPIRATION DU CONTRAT
+        async function syncUserData() {
+            try {
+                const response = await fetch(`${DB_URL}/${userPhone}.json`);
+                const user = await response.json();
+
+                if (!user) return;
+
+                currentBalance = parseFloat(user.balance || 0);
+                currentParrain = user.referredBy || "";
+
+                document.getElementById('userBalance').innerText = currentBalance.toFixed(2) + " $";
+                document.getElementById('userTodayEarnings').innerText = (parseFloat(user.todayEarnings) || 0).toFixed(2) + " $";
+
+                // GESTION DU CONTRAT ACTIF ET EXPIRATION AUTO
+                if (user.hasActiveContract) {
+                    const daysLeft = parseInt(user.contractDaysLeft);
+
+                    if (daysLeft <= 0) {
+                        // LE CONTRAT A EXPIRÉ : Restitution du capital + derniers gains accumulés
+                        const capitalA_Restituer = parseFloat(user.contractAmount || 0);
+                        const gainsDuJour = capitalA_Restituer * parseFloat(user.contractRate || 0);
+                        
+                        const balanceMiseAJour = currentBalance + capitalA_Restituer + gainsDuJour;
+
+                        // Reset complet des variables de contrat
+                        const contractExpiredData = {
+                            balance: balanceMiseAJour,
+                            hasActiveContract: false,
+                            contractType: "",
+                            contractAmount: 0,
+                            contractDaysLeft: 0,
+                            contractRate: 0,
+                            todayEarnings: gainsDuJour
+                        };
+
+                        await fetch(`${DB_URL}/${userPhone}.json`, {
                             method: 'PATCH',
-                            body: JSON.stringify({ clicksToday: 0, lastClickDate: todayStr })
+                            body: JSON.stringify(contractExpiredData)
                         });
+
+                        alert(`⏰ Votre contrat ${user.contractType} est arrivé à son terme ! Votre capital initial de ${capitalA_Restituer.toFixed(2)}$ ainsi que vos gains ont été reversés sur votre solde.`);
+                        window.location.reload();
                     } else {
-                        clicksToday = parseInt(user.clicksToday) || 0;
-                        localTodayEarnings = parseFloat(user.todayEarnings) || 0;
+                        // Contrat toujours valide, affichage des détails
+                        document.getElementById('noContractBox').classList.add('hidden');
+                        document.getElementById('activeContractBox').classList.remove('hidden');
+
+                        document.getElementById('activeContractName').innerText = `Produit ${user.contractType}`;
+                        document.getElementById('activeContractTimer').innerText = `${daysLeft} Jour(s) restant(s)`;
+                        document.getElementById('activeContractCapital').innerText = (parseFloat(user.contractAmount) || 0).toFixed(2) + " $";
+                        
+                        const dailyPayout = (parseFloat(user.contractAmount) * parseFloat(user.contractRate));
+                        document.getElementById('activeContractPayout').innerText = `+${dailyPayout.toFixed(2)} $ / jour`;
                     }
-
-                    document.getElementById('userVipBadge').innerText = userVip;
-                    document.getElementById('clickCounter').innerText = `${clicksToday} / 30`;
-                    document.getElementById('todayEarnings').innerText = `${Math.floor(localTodayEarnings).toLocaleString()} FC`;
+                } else {
+                    document.getElementById('noContractBox').classList.remove('hidden');
+                    document.getElementById('activeContractBox').classList.add('hidden');
                 }
-            } catch (e) { console.error(e); }
+
+            } catch (e) { console.error("Erreur de synchronisation globale.", e); }
         }
 
-        let currentCommission = 0;
-
-        function startGrabbing(roomVip, minRequiredBalance, payoutPerClick) {
-            // 1. Protection Niveau VIP requis
-            if (userVip < roomVip) {
-                return alert(`Accès refusé. Vous devez être au minimum VIP ${roomVip} pour débloquer cette salle !`);
+        // TRAITEMENT DU PARRAINAGE ET DE LA SÉCURISATION DE LOCATION
+        async function processRent(type, cost, rate, days) {
+            if (document.getElementById('noContractBox').classList.contains('hidden')) {
+                return alert("Vous possédez déjà un contrat en cours. Attendez son expiration complète.");
+            }
+            if (currentBalance < cost) {
+                return alert(`Solde insuffisant. Il vous faut un minimum de ${cost.toFixed(2)}$ pour louer ce produit.`);
             }
 
-            // 2. Protection Solde requis (Principe de blocage Otto Market)
-            if (userBalance < minRequiredBalance) {
-                return alert(`Solde insuffisant pour brosser dans cette salle. Solde requis : ${minRequiredBalance.toLocaleString()} FC.`);
-            }
+            // Calcul du gain du jour généré
+            const baseDailyGain = cost * rate;
+            const remainingBalance = currentBalance - cost;
 
-            // 3. Limite quotidienne de clics
-            if (clicksToday >= 30) {
-                return alert("Vous avez épuisé vos 30 commandes quotidiennes pour aujourd'hui !");
-            }
-
-            currentCommission = payoutPerClick;
-
-            // Déclenchement du panneau de scan
-            document.getElementById('grabbingOverlay').classList.remove('hidden');
-            document.getElementById('loaderZone').innerHTML = '<div class="spinner"></div>';
-            document.getElementById('statusText').innerText = "Recherche d'un marchand sur le réseau...";
-            document.getElementById('productDetails').innerText = "";
-            document.getElementById('confirmOrderBtn').classList.add('hidden');
-
-            // Simulation du système d'appariement algorithmique d'Otto Market
-            setTimeout(() => {
-                const randomItem = itemsList[Math.floor(Math.random() * itemsList.length)];
-                document.getElementById('loaderZone').innerHTML = '<i class="fa-solid fa-circle-check text-5xl text-emerald-500"></i>';
-                document.getElementById('statusText').innerText = "Commande Associée avec succès !";
-                document.getElementById('productDetails').innerText = `${randomItem} - Commission générée : +${Math.floor(currentCommission)} FC`;
-                document.getElementById('confirmOrderBtn').classList.remove('hidden');
-            }, 2500);
-        }
-
-        // Action finale : Validation et enregistrement dans Firebase
-        document.getElementById('confirmOrderBtn').onclick = async function() {
-            document.getElementById('grabbingOverlay').classList.add('hidden');
-            
-            clicksToday += 1;
-            userBalance += currentCommission;
-            localTodayEarnings += currentCommission;
-
-            document.getElementById('clickCounter').innerText = `${clicksToday} / 30`;
-            document.getElementById('todayEarnings').innerText = `${Math.floor(localTodayEarnings).toLocaleString()} FC`;
+            // Déduction immédiate du solde et enregistrement du contrat
+            const nextContract = {
+                balance: remainingBalance,
+                hasActiveContract: true,
+                contractType: type,
+                contractAmount: cost,
+                contractRate: rate,
+                contractDaysLeft: days,
+                todayEarnings: baseDailyGain
+            };
 
             try {
-                await fetch(`${DB_URL}/${loggedUserPhone}.json`, {
+                // 1. Enregistrement du contrat sur le profil
+                await fetch(`${DB_URL}/${userPhone}.json`, {
                     method: 'PATCH',
-                    body: JSON.stringify({
-                        balance: userBalance,
-                        clicksToday: clicksToday,
-                        todayEarnings: localTodayEarnings
-                    })
+                    body: JSON.stringify(nextContract)
                 });
-                alert("Commission créditée sur votre compte principal !");
-            } catch (e) {
-                alert("Erreur de synchronisation réseau.");
-            }
-        };
 
-        window.onload = loadUserStats;
+                // 2. DISTRIBUTION DE LA COMMISSION DE PARRAINAGE DIRECT (Niveau A : 16%)
+                if (currentParrain && currentParrain !== "Aucun" && currentParrain !== "") {
+                    const parrainRes = await fetch(`${DB_URL}/${currentParrain}.json`);
+                    const parrainUser = await parrainRes.json();
+
+                    if (parrainUser) {
+                        const activeParrainBalance = parseFloat(parrainUser.balance || 0);
+                        const affiliationGain = baseDailyGain * 0.16; // 16% sur les gains générés
+                        const updatedParrainBalance = activeParrainBalance + affiliationGain;
+
+                        await fetch(`${DB_URL}/${currentParrain}.json`, {
+                            method: 'PATCH',
+                            body: JSON.stringify({ balance: updatedParrainBalance })
+                        });
+                    }
+                }
+
+                alert(`🎉 Location validée ! Le produit ${type} est actif pour ${days} jours. Votre capital est sécurisé.`);
+                window.location.reload();
+
+            } catch (error) {
+                alert("Une erreur est survenue lors de la validation réseau.");
+            }
+        }
+
+        window.onload = syncUserData;
     </script>
 </body>
 </html>
