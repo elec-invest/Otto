@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otto Market | Recharge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; padding-bottom: 40px; }
+        .btn-rouge { background: linear-gradient(90deg, #dc3545, #bd2130); }
+        .tab-vip.active { background-color: #dc3545; color: #fff; font-weight: bold; border-color: #dc3545; }
+        .amount-box.active { border-color: #dc3545; background-color: #fef2f2; color: #dc3545; font-weight: bold; }
+        .network-box.active { border-color: #dc3545; background-color: #fef2f2; }
+    </style>
+</head>
+<body class="w-full max-w-[450px] mx-auto bg-slate-50 min-h-screen relative">
+
+    <div class="bg-white p-4 shadow-sm border-b border-slate-100 sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <a href="compte.html" class="text-slate-700 text-lg"><i class="fa-solid fa-arrow-left"></i></a>
+            <h1 class="text-base font-black text-slate-800 uppercase italic">Recharger mon compte</h1>
+        </div>
+    </div>
+
+    <div class="p-4 space-y-5">
+        
+        <div class="space-y-2">
+            <label class="text-xs font-black text-slate-700 uppercase tracking-wide block"><i class="fa-solid fa-layer-group text-red-500 mr-1"></i> 1. Choisissez le Niveau VIP</label>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="selectVipLevel('vip1')" id="tab-vip1" class="tab-vip border border-slate-200 bg-white py-2.5 rounded-xl text-xs font-bold text-slate-500 transition-all">VIP 1</button>
+                <button onclick="selectVipLevel('vip2')" id="tab-vip2" class="tab-vip border border-slate-200 bg-white py-2.5 rounded-xl text-xs font-bold text-slate-500 transition-all">VIP 2</button>
+                <button onclick="selectVipLevel('vip3')" id="tab-vip3" class="tab-vip border border-slate-200 bg-white py-2.5 rounded-xl text-xs font-bold text-slate-500 transition-all">VIP 3</button>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-xs font-black text-slate-700 uppercase tracking-wide block"><i class="fa-solid fa-money-bill-wave text-emerald-500 mr-1"></i> 2. Sélectionnez le montant permis ($)</label>
+            
+            <div id="amounts-vip1" class="amount-group grid grid-cols-3 gap-2 hidden">
+                <button onclick="selectAmount(12)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">12 $</button>
+                <button onclick="selectAmount(52)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">52 $</button>
+                <button onclick="selectAmount(100)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">100 $</button>
+                <button onclick="selectAmount(162)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">162 $</button>
+                <button onclick="selectAmount(200)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">200 $</button>
+            </div>
+
+            <div id="amounts-vip2" class="amount-group grid grid-cols-3 gap-2 hidden">
+                <button onclick="selectAmount(300)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">300 $</button>
+                <button onclick="selectAmount(400)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">400 $</button>
+                <button onclick="selectAmount(500)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">500 $</button>
+                <button onclick="selectAmount(600)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">600 $</button>
+                <button onclick="selectAmount(800)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">800 $</button>
+            </div>
+
+            <div id="amounts-vip3" class="amount-group grid grid-cols-3 gap-2 hidden">
+                <button onclick="selectAmount(1000)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">1000 $</button>
+                <button onclick="selectAmount(2000)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">2000 $</button>
+                <button onclick="selectAmount(3000)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">3000 $</button>
+                <button onclick="selectAmount(4000)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">4000 $</button>
+                <button onclick="selectAmount(5000)" class="amount-box border bg-white py-3 rounded-2xl text-xs font-bold text-slate-700">5000 $</button>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="text-xs font-black text-slate-700 uppercase tracking-wide block"><i class="fa-solid fa-mobile-screen text-blue-500 mr-1"></i> 3. Sélectionnez le réseau Mobile Money</label>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="selectNetwork('Airtel Money', '0971234567')" id="net-airtel" class="network-box border bg-white p-2 rounded-2xl flex flex-col items-center justify-center space-y-1">
+                    <span class="text-[10px] font-black text-red-600 uppercase">Airtel</span>
+                </button>
+                <button onclick="selectNetwork('Orange Money', '0891234567')" id="net-orange" class="network-box border bg-white p-2 rounded-2xl flex flex-col items-center justify-center space-y-1">
+                    <span class="text-[10px] font-black text-orange-500 uppercase">Orange</span>
+                </button>
+                <button onclick="selectNetwork('Vodacom M-Pesa', '0811234567')" id="net-vodacom" class="network-box border bg-white p-2 rounded-2xl flex flex-col items-center justify-center space-y-1">
+                    <span class="text-[10px] font-black text-blue-600 uppercase">Vodacom</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="instructionsBox" class="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3 hidden">
+            <div class="text-center">
+                <span class="text-[9px] uppercase font-black text-amber-600 block tracking-wider">Numéro de l'agent de la plateforme</span>
+                <strong id="agentNumberDisplay" class="text-base font-black text-slate-900 tracking-wide select-all block mt-0.5">0000000000</strong>
+                <span class="text-[9px] text-amber-500 italic font-bold">(Appui long pour copier le numéro)</span>
+            </div>
+            <p class="text-[11px] text-amber-800 font-medium bg-white/60 p-2.5 rounded-xl border border-amber-100 text-center">
+                <i class="fa-solid fa-circle-exclamation mr-1 text-amber-600"></i>
+                <strong>Note importante :</strong> Vous devez effectuer le transfert de manière <strong>manuelle</strong> depuis votre téléphone vers le numéro de l'agent ci-dessus avant de soumettre ce formulaire.
+            </p>
+        </div>
+
+        <div id="formFieldsBox" class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 space-y-3 hidden">
+            <span class="text-[10px] uppercase font-black text-slate-400 block tracking-wider border-b pb-1.5 mb-2">Informations de transaction</span>
+            
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-500 uppercase">1. Mon Numéro Expéditeur</label>
+                <input type="number" id="senderPhone" placeholder="Ex: 097XXXXXXXX" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 outline-none focus:border-slate-400">
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-bold text-slate-500 uppercase">2. Identité / Nom complet enregistré</label>
+                <input type="text" id="senderName" placeholder="Ex: Jean Mukendi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 outline-none focus:border-slate-400">
+            </div>
+
+            <button onclick="submitDepositRequest()" class="btn-rouge w-full text-white font-black text-xs uppercase py-3 rounded-2xl shadow-md tracking-wider mt-2 transition-transform active:scale-95">
+                Valider la Recharge
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const FIREBASE_BASE_URL = "https://alibaba-f22a0-default-rtdb.firebaseio.com";
+        const userPhone = localStorage.getItem('userPhone');
+
+        let selectedAmount = 0;
+        let selectedNetwork = "";
+        let selectedAgentNumber = "";
+
+        if (!userPhone) { window.location.href = 'connexion.html'; }
+
+        // Changement dynamique des onglets VIP et affichage des montants dédiés
+        function selectVipLevel(vipKey) {
+            document.querySelectorAll('.tab-vip').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.amount-group').forEach(group => group.classList.add('hidden'));
+            document.querySelectorAll('.amount-box').forEach(box => box.classList.remove('active'));
+            
+            document.getElementById(`tab-${vipKey}`).classList.add('active');
+            document.getElementById(`amounts-${vipKey}`).classList.remove('hidden');
+
+            // Reset des sélections en cascade pour éviter les erreurs
+            selectedAmount = 0;
+            hideInstructionsAndForm();
+        }
+
+        // Sélection du montant
+        function selectAmount(amount) {
+            document.querySelectorAll('.amount-box').forEach(box => box.classList.remove('active'));
+            event.target.classList.add('active');
+            selectedAmount = amount;
+            
+            // Si le réseau est déjà choisi, on rafraîchit l'affichage
+            if (selectedNetwork) { showInstructionsAndForm(); }
+        }
+
+        // Sélection du réseau Mobile Money
+        function selectNetwork(networkName, agentNumber) {
+            document.querySelectorAll('.network-box').forEach(box => box.classList.remove('active'));
+            
+            if (networkName === 'Airtel Money') document.getElementById('net-airtel').classList.add('active');
+            if (networkName === 'Orange Money') document.getElementById('net-orange').classList.add('active');
+            if (networkName === 'Vodacom M-Pesa') document.getElementById('net-vodacom').classList.add('active');
+
+            selectedNetwork = networkName;
+            selectedAgentNumber = agentNumber; // Le numéro de ton agent plateforme
+
+            if (selectedAmount > 0) {
+                showInstructionsAndForm();
+            } else {
+                alert("Veuillez d'abord sélectionner un montant permis.");
+            }
+        }
+
+        function showInstructionsAndForm() {
+            document.getElementById('agentNumberDisplay').innerText = selectedAgentNumber;
+            document.getElementById('instructionsBox').classList.remove('hidden');
+            document.getElementById('formFieldsBox').classList.remove('hidden');
+        }
+
+        function hideInstructionsAndForm() {
+            document.getElementById('instructionsBox').classList.add('hidden');
+            document.getElementById('formFieldsBox').classList.add('hidden');
+            // Réinitialisation des cases
+            document.querySelectorAll('.network-box').forEach(box => box.classList.remove('active'));
+            selectedNetwork = "";
+        }
+
+        // Envoi sécurisé des données vers la page d'administration
+        async function submitDepositRequest() {
+            const senderPhone = document.getElementById('senderPhone').value.trim();
+            const senderName = document.getElementById('senderName').value.trim();
+
+            if (!senderPhone || !senderName) {
+                return alert("Veuillez remplir toutes les cases obligatoires (Numéro expéditeur et Nom).");
+            }
+
+            const depositPayload = {
+                userPhone: userPhone,
+                amount: parseFloat(selectedAmount),
+                network: selectedNetwork,
+                senderPhone: senderPhone,
+                senderName: senderName,
+                status: "En attente", // Ce statut passera à "Validé" ou "Rejeté" dans ton panel admin
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Création d'une entrée unique sous la branche globale "deposits" pour ton panneau admin
+                const response = await fetch(`${FIREBASE_BASE_URL}/deposits.json`, {
+                    method: 'POST',
+                    body: JSON.stringify(depositPayload)
+                });
+
+                if (response.ok) {
+                    alert(`✅ Votre demande de recharge de ${selectedAmount}$ a été soumise avec succès ! Elle est en attente de vérification par l'administrateur.`);
+                    window.location.href = 'compte.html';
+                } else {
+                    alert("Une erreur réseau s'est produite lors de l'envoi.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Impossible de joindre le serveur. Veuillez réessayer.");
+            }
+        }
+    </script>
+</body>
+</html>
